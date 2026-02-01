@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import CreatePost from "./pages/CreatePost";
 import Logout from "./pages/Logout";
 import ProtectedRoutes from "./components/ProtectedRoutes";
+import NotFoundErrorPage from "./pages/PageNotFound";
 
 const routes = createBrowserRouter([
   {
@@ -49,6 +50,14 @@ const routes = createBrowserRouter([
         errorElement: <Error />,
       },
     ],
+  },
+  {
+    path: "/error",
+    element: <Error />,
+  },
+  {
+    path: "*",
+    element: <NotFoundErrorPage />,
   },
 ]);
 
