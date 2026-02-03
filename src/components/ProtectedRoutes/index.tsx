@@ -4,6 +4,9 @@ import React, { useContext } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebaseConfig";
+import Error from "@/pages/Error";
+import Layout from "../Layout";
+import Loader from "../Loader";
 
 type Props = {
   children?: React.ReactNode;
@@ -16,16 +19,19 @@ const ProtectedRoutes = (_props: Props) => {
   const location = useLocation();
 
   if (loading) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center">
-        <div className="h-15 w-15 animate-spin rounded-full border-6 border-gray-300 border-t-blue-500"></div>
-        <div className="mt-2 ml-2 text-lg">Loading...</div>
-      </div>
-    );
+    return <Loader />;
   }
 
+  if (error) {
+    return <Error />;
+  }
+
+  console.log("ProtectedRoutes - isAuthenticated:", isAuthenticated);
+  console.log("ProtectedRoutes - user:", user);
   return isAuthenticated && user ? (
-    <Outlet />
+    <Layout>
+      <Outlet />
+    </Layout>
   ) : (
     <Navigate to="/login" state={{ from: location }} />
   );

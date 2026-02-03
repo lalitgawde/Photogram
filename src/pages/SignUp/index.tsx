@@ -18,6 +18,7 @@ import image4 from "@/assets/images/image4.jpg";
 import { Label } from "@radix-ui/react-label";
 import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Loader from "@/components/Loader";
 
 type UserSignInTypes = {
   email: string;
@@ -42,6 +43,7 @@ type ErrorTypes = {
 
 const Signup = (_props: Props) => {
   const { signup, signinWithGoogle } = React.useContext(UserAuthContext);
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     React.useState<boolean>(false);
@@ -49,8 +51,9 @@ const Signup = (_props: Props) => {
     isError: "",
     errMessage: "",
   });
-  const navigate = useNavigate();
   const [userInfo, setUserInfo] = React.useState<UserSignInTypes>(initialValue);
+  const [loading, setLoading] = React.useState(false);
+
   const handleGoogleSignIn = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     try {
@@ -84,8 +87,9 @@ const Signup = (_props: Props) => {
           errMessage: "Please enter the same password",
         });
       } else {
-        console.log("The user info is : ", userInfo);
+        setLoading(true);
         await signup(userInfo.email, userInfo.password);
+        setLoading(false);
         navigate("/");
       }
     } catch (error) {
@@ -102,155 +106,160 @@ const Signup = (_props: Props) => {
   };
 
   return (
-    <div className="bg-slate-800 w-full min-h-screen flex justify-center items-center px-4 sm:px-6">
-      <div className="w-full lg:flex lg:justify-center lg:items-start p-6 sm:p-12 gap-8">
-        <div className="hidden lg:block lg:w-3/4">
-          <div className="grid grid-cols-2 grid- gap-2">
-            <img
-              className=" w-2/3 h-auto object-contain aspect-video rounded-3xl place-self-end"
-              src={image2}
-            />
-            <img
-              className=" w-2/4 h-auto object-contain aspect-auto rounded-3xl"
-              src={image1}
-            />
-            <img
-              className=" w-2/4 h-auto object-contain aspect-auto rounded-3xl place-self-end"
-              src={image4}
-            />
-            <img
-              className=" w-2/3 h-auto object-contain aspect-video rounded-3xl"
-              src={image3}
-            />
+    <>
+      {loading && <Loader />}
+      <div className="bg-slate-800 w-full min-h-screen flex justify-center items-center px-4 sm:px-6">
+        <div className="w-full lg:flex lg:justify-center lg:items-start p-6 sm:p-12 gap-8">
+          <div className="hidden lg:block lg:w-3/4">
+            <div className="grid grid-cols-2 grid- gap-2">
+              <img
+                className=" w-2/3 h-auto object-contain aspect-video rounded-3xl place-self-end"
+                src={image2}
+              />
+              <img
+                className=" w-2/4 h-auto object-contain aspect-auto rounded-3xl"
+                src={image1}
+              />
+              <img
+                className=" w-2/4 h-auto object-contain aspect-auto rounded-3xl place-self-end"
+                src={image4}
+              />
+              <img
+                className=" w-2/3 h-auto object-contain aspect-video rounded-3xl"
+                src={image3}
+              />
+            </div>
           </div>
-        </div>
-        <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/3 mx-auto lg:m-12 rounded-xl border bg-card text-card-foreground shadow-sm">
-          <Card>
-            <form onSubmit={handleSubmit}>
-              <CardHeader className="space-y-1">
-                <CardTitle className="text-2xl text-center">
-                  PhotoGram
-                </CardTitle>
-                <CardDescription className="pb-4 text-center text-base">
-                  Enter your email below to create your account
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-4 px-2 sm:px-4">
-                <div className="grid">
-                  <Button
-                    variant="outline"
-                    onClick={handleGoogleSignIn}
-                    className="cursor-pointer"
-                  >
-                    <Icons.google className="mr-2 h-4 w-4" />
-                    Google
-                  </Button>
-                </div>
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
+          <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/3 mx-auto lg:m-12 rounded-xl border bg-card text-card-foreground shadow-sm">
+            <Card>
+              <form onSubmit={handleSubmit}>
+                <CardHeader className="space-y-1">
+                  <CardTitle className="text-2xl text-center">
+                    PhotoGram
+                  </CardTitle>
+                  <CardDescription className="pb-4 text-center text-base">
+                    Enter your email below to create your account
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-4 px-2 sm:px-4">
+                  <div className="grid">
+                    <Button
+                      variant="outline"
+                      onClick={handleGoogleSignIn}
+                      className="cursor-pointer"
+                    >
+                      <Icons.google className="mr-2 h-4 w-4" />
+                      Google
+                    </Button>
                   </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                      Or
-                    </span>
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">
+                        Or
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="dipesh@example.com"
-                    value={userInfo.email}
-                    onChange={handleInputChange}
-                  />
-                  {error.isError === "email" && (
-                    <p className="text-sm text-red-600">{error.errMessage}</p>
-                  )}
-                </div>
-                <div className="grid gap-2">
-                  <div className="relative w-full">
-                    <Label htmlFor="password">Password</Label>
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="dipesh@example.com"
+                      value={userInfo.email}
+                      onChange={handleInputChange}
+                    />
+                    {error.isError === "email" && (
+                      <p className="text-sm text-red-600">{error.errMessage}</p>
+                    )}
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="relative w-full">
+                      <Label htmlFor="password">Password</Label>
+                      <div className="relative w-full">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Password"
+                          className={`border border-gray-300 rounded-md p-2 ${
+                            error.isError === "password" ? "mb-2" : ""
+                          }`}
+                          value={userInfo.password}
+                          onChange={handleInputChange}
+                        />
+                        {error.isError === "password" && (
+                          <p className="text-sm text-red-600">
+                            {error.errMessage}
+                          </p>
+                        )}
+                        <img
+                          src={`${
+                            showPassword
+                              ? "./images/hidden.png"
+                              : "./images/eye.png"
+                          }`}
+                          alt={`${
+                            showPassword
+                              ? "./images/hidden.png"
+                              : "./images/eye.png"
+                          }`}
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="w-5 h-5 absolute right-4 top-2 cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="confirmpassword">Confirm password</Label>
                     <div className="relative w-full">
                       <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        className={`border border-gray-300 rounded-md p-2 ${
-                          error.isError === "password" ? "mb-2" : ""
-                        }`}
-                        value={userInfo.password}
+                        id="confirmpassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm password"
+                        className={`border border-gray-300 rounded-md p-2 mb-2`}
+                        value={userInfo.confirmpassword}
                         onChange={handleInputChange}
                       />
-                      {error.isError === "password" && (
+                      {error.isError === "confirmpassword" && (
                         <p className="text-sm text-red-600">
                           {error.errMessage}
                         </p>
                       )}
                       <img
                         src={`${
-                          showPassword
+                          showConfirmPassword
                             ? "./images/hidden.png"
                             : "./images/eye.png"
                         }`}
                         alt={`${
-                          showPassword
+                          showConfirmPassword
                             ? "./images/hidden.png"
                             : "./images/eye.png"
                         }`}
-                        onClick={() => setShowPassword(!showPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                         className="w-5 h-5 absolute right-4 top-2 cursor-pointer"
                       />
                     </div>
                   </div>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="confirmpassword">Confirm password</Label>
-                  <div className="relative w-full">
-                    <Input
-                      id="confirmpassword"
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm password"
-                      className={`border border-gray-300 rounded-md p-2 mb-2`}
-                      value={userInfo.confirmpassword}
-                      onChange={handleInputChange}
-                    />
-                    {error.isError === "confirmpassword" && (
-                      <p className="text-sm text-red-600">{error.errMessage}</p>
-                    )}
-                    <img
-                      src={`${
-                        showConfirmPassword
-                          ? "./images/hidden.png"
-                          : "./images/eye.png"
-                      }`}
-                      alt={`${
-                        showConfirmPassword
-                          ? "./images/hidden.png"
-                          : "./images/eye.png"
-                      }`}
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className="w-5 h-5 absolute right-4 top-2 cursor-pointer"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col mt-4 px-2 sm:px-4">
-                <Button className="w-full cursor-pointer" type="submit">
-                  Sign Up
-                </Button>
-                <p className="mt-3 text-sm text-center">
-                  Already have an account ? <Link to="/login">Login</Link>
-                </p>
-              </CardFooter>
-            </form>
-          </Card>
+                </CardContent>
+                <CardFooter className="flex flex-col mt-4 px-2 sm:px-4">
+                  <Button className="w-full cursor-pointer" type="submit">
+                    Sign Up
+                  </Button>
+                  <p className="mt-3 text-sm text-center">
+                    Already have an account ? <Link to="/login">Login</Link>
+                  </p>
+                </CardFooter>
+              </form>
+            </Card>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
