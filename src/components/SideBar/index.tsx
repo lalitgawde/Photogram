@@ -72,19 +72,25 @@ const Sidebar = () => {
         {navItems.map((item) => {
           const classes =
             pathname === item.link
-              ? "bg-white text-slate-900 hover:bg-white rounded-none"
+              ? "bg-white text-slate-900 rounded-none"
               : "hover:bg-slate-950 text-white hover:text-white bg-transparent rounded-none";
 
           return item.name === "Logout" ? (
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-1 my-4 text-white hover:bg-slate-950 w-full cursor-pointer"
-            >
-              <img src={logoutIcon} className="h-5 w-5 sm:h-8 sm:w-8 invert" />
-              <span className="text-[14px] sm:text-[20px] font-semibold">
-                Logout
-              </span>
-            </button>
+            <li>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-1 my-4 text-white hover:bg-slate-950 w-full cursor-pointer"
+              >
+                <img
+                  src={logoutIcon}
+                  alt={item.name}
+                  className="h-5 w-5 sm:h-8 sm:w-8 invert"
+                />
+                <span className="text-[14px] sm:text-[20px] font-semibold">
+                  {item.name}
+                </span>
+              </button>
+            </li>
           ) : (
             <Link to={item.link}>
               <li
@@ -92,6 +98,7 @@ const Sidebar = () => {
               >
                 <img
                   src={item.icon}
+                  alt={item.name}
                   className="h-5 w-5 sm:h-8 sm:w-8 object-contain text-white"
                   style={{
                     filter: `${
