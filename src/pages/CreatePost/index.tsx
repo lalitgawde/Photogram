@@ -6,20 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import UserAuthContext from "@/store/UserAuthContext";
 import { useNavigate } from "react-router-dom";
 import { type OutputFileEntry } from "@uploadcare/file-uploader";
-
-export interface Post {
-  caption: string;
-  photos: PhotoMeta[];
-  likes: number;
-  userlikes: [];
-  userId: string | null;
-  date: Date;
-}
-
-export interface PhotoMeta {
-  cdnUrl: string | null;
-  uuid: string | null;
-}
+import type { PhotoMeta, Post } from "@/types";
+import { createPost } from "@/repository";
 
 export interface FileEntry {
   files: OutputFileEntry[];
@@ -42,22 +30,26 @@ const CreatePost = () => {
 
   const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Uploaded File Entry : ", fileEntry.files);
-    console.log("The create post is : ", post);
-    const photoMeta: PhotoMeta[] = fileEntry.files.map((file) => {
-      return { cdnUrl: file.cdnUrl, uuid: file.uuid };
-    });
-    if (user != null) {
-      const newPost: Post = {
-        ...post,
-        userId: user?.uid || null,
-        photos: photoMeta,
-      };
-      console.log("The final posy is  : ", newPost);
-      // await createPost(newPost);
-      navigate("/");
-    } else {
-      navigate("/login");
+    try {
+      const photoMeta: PhotoMeta[] = fileEntry.files.map((file) => {
+        return { cdnUrl: file.cdnUrl, uuid: file.uuid };
+      });
+      if (user != null) {
+        const newPost: Post = {
+          ...post,
+          userId: user?.uid || null,
+          photos: photoMeta,
+        };
+        console.log("The final posy is  : ", newPost);
+        const postId = await createPost(newPost);
+        console.log("Created post with ID: ", postId);
+        navigate("/");
+      } else {
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Error creating post: ", error);
+      navigate("/error");
     }
   };
 
